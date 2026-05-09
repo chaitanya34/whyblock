@@ -383,24 +383,16 @@ AWS provides two built-in tools for network analysis. Here is why `whyblock` is 
 ## Contributing
 
 Contributions are welcome. Please open an issue before submitting a large PR so we can discuss the approach.
+## Contributing
 
-```bash
-# Clone the repo
-git clone https://github.com/yourhandle/whyblock.git
-cd whyblock
-
-# Install dependencies
-go mod download
-
-# Run
-go run main.go check --instance i-0abc123 --port 443
-
-# Run tests
-go test ./...
-
-# Build
-go build -o whyblock .
-```
+1. Fork the repository
+2. Create a feature branch from `dev`
+   git checkout -b feat/your-feature-name
+3. Make your changes
+4. Run make check before pushing
+   make check
+5. Push to your fork and open a PR targeting `dev`
+6. Once reviewed and merged to dev, maintainer merges dev → main for releases
 
 ---
 

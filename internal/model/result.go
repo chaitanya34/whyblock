@@ -16,11 +16,11 @@ type LayerResult struct {
 	Layer      string
 	Detail     string
 	Status     LayerStatus
-	FixHint    string // populated only when Status == BLOCK
-	ConsoleURL string // direct AWS console deep-link when Status == BLOCK
+	FixHint    string
+	ConsoleURL string
 }
 
-// ProbeOutcome represents the result of the TCP probe.
+// ProbeOutcome represents the result of a TCP probe attempt.
 type ProbeOutcome string
 
 const (
@@ -36,14 +36,23 @@ type ProbeResult struct {
 	Latency time.Duration
 }
 
-// Verdict is the final cross-referenced result.
-type Verdict string
+// VerdictStatus is the final reachability verdict.
+type VerdictStatus string
 
 const (
-	VerdictReachable Verdict = "REACHABLE"
-	VerdictBlocked   Verdict = "BLOCKED"
-	VerdictPartial   Verdict = "PARTIAL" // AWS layers pass but TCP probe differs
+	VerdictReachable VerdictStatus = "REACHABLE"
+	VerdictBlocked   VerdictStatus = "BLOCKED"
+	VerdictPartial   VerdictStatus = "PARTIAL"
 )
+
+// Verdict is the correlated result from the analyzer.
+// It is an internal struct — not exposed directly in CheckResult.
+type Verdict struct {
+	Status     VerdictStatus
+	BlockedAt  string
+	FixHint    string
+	ConsoleURL string
+}
 
 // CheckResult is the complete output of a whyblock check command.
 type CheckResult struct {
@@ -53,8 +62,8 @@ type CheckResult struct {
 	Source     string
 	Layers     []LayerResult
 	Probe      ProbeResult
-	Verdict    Verdict
-	BlockedAt  string // layer name where block occurred
+	Verdict    VerdictStatus // REACHABLE | BLOCKED | PARTIAL
+	BlockedAt  string
 	FixHint    string
 	ConsoleURL string
 }
@@ -63,11 +72,11 @@ type CheckResult struct {
 type ExposedPort struct {
 	Port         int
 	Proto        string
-	SGRule       string // which SG rule opened this port
+	SGRule       string
 	NACLVerdict  LayerStatus
 	ProbeOutcome ProbeOutcome
-	Sensitive    bool   // true for known sensitive ports (SSH, DB ports etc.)
-	Warning      string // populated when Sensitive == true
+	Sensitive    bool
+	Warning      string
 }
 
 // ExposeResult is the complete output of a whyblock expose command.
@@ -91,7 +100,7 @@ type RulesResult struct {
 type SGRuleSummary struct {
 	SGID      string
 	SGName    string
-	Direction string // inbound | outbound
+	Direction string
 	Protocol  string
 	FromPort  int
 	ToPort    int
@@ -102,11 +111,11 @@ type SGRuleSummary struct {
 type NACLRuleSummary struct {
 	NACLID     string
 	RuleNumber int
-	Direction  string // inbound | outbound
+	Direction  string
 	Protocol   string
 	PortRange  string
 	CIDR       string
-	Action     string // ALLOW | DENY
+	Action     string
 }
 
 // RouteSummary is a human-readable route table entry.

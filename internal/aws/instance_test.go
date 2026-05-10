@@ -104,7 +104,7 @@ func TestMapInstance(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := mapInstance(tt.input)
+			got := mapInstance(tt.input, "")
 
 			if got.InstanceID != tt.expected.InstanceID {
 				t.Errorf("InstanceID: got %q want %q", got.InstanceID, tt.expected.InstanceID)

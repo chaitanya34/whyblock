@@ -31,6 +31,7 @@ type InstanceData struct {
 	SubnetID       string
 	SecurityGroups []string
 	State          string
+	Region         string
 }
 
 // SecurityGroup holds inbound and outbound rules for one SG.

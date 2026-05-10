@@ -32,7 +32,7 @@ func (c *Client) GetInstance(ctx context.Context, instanceId string) (InstanceDa
 		return InstanceData{}, fmt.Errorf("instance %s not found", instanceId)
 	}
 
-	return mapInstance(instanceResult.Reservations[0].Instances[0]), nil
+	return mapInstance(instanceResult.Reservations[0].Instances[0], c.region), nil
 
 }
 
@@ -67,13 +67,14 @@ func (c *Client) GetEIP(ctx context.Context, instanceID string) (string, error) 
 
 // mapInstance converts the AWS SDK instance type into our internal InstanceData.
 // All SDK pointer dereferences are handled safely here in one place.
-func mapInstance(i types.Instance) InstanceData {
+func mapInstance(i types.Instance, region string) InstanceData {
 	data := InstanceData{
 		InstanceID: aws.ToString(i.InstanceId),
 		PrivateIP:  aws.ToString(i.PrivateIpAddress),
 		VPCID:      aws.ToString(i.VpcId),
 		SubnetID:   aws.ToString(i.SubnetId),
 		State:      string(i.State.Name),
+		Region:     region,
 	}
 
 	// PublicIpAddress is the auto-assigned public IP (changes on stop/start)

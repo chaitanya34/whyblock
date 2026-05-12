@@ -48,8 +48,13 @@ func (c *Client) GetIGW(ctx context.Context, vpcID string) (IGW, error) {
 // An IGW can exist but be in "detaching" state — we must verify.
 func isAttachedToVPC(attachments []types.InternetGatewayAttachment, vpcID string) bool {
 	for _, a := range attachments {
-		if aws.ToString(a.VpcId) == vpcID &&
-			a.State == types.AttachmentStatusAttached {
+		if aws.ToString(a.VpcId) != vpcID {
+			continue
+		}
+		// AWS uses "attached" in most regions and "available" in some
+		// both mean the IGW is active and routing traffic
+		state := string(a.State)
+		if state == string(types.AttachmentStatusAttached) || state == string(types.AllocationStateAvailable) {
 			return true
 		}
 	}

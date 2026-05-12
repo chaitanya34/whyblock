@@ -60,13 +60,11 @@ func checkIGW(ctx context.Context, client aws.AWSClient, vpcID string) model.Lay
 
 	if !igw.Attached {
 		return model.LayerResult{
-			Layer:   layerIGW,
-			Detail:  "no Internet Gateway attached to VPC",
-			Status:  model.StatusBlock,
-			FixHint: "attach an Internet Gateway to the VPC",
-			ConsoleURL: fmt.Sprintf(
-				"https://console.aws.amazon.com/vpc/home#InternetGateways",
-			),
+			Layer:      layerIGW,
+			Detail:     "no Internet Gateway attached to VPC",
+			Status:     model.StatusBlock,
+			FixHint:    "attach an Internet Gateway to the VPC",
+			ConsoleURL: "https://console.aws.amazon.com/vpc/home#InternetGateways",
 		}
 	}
 

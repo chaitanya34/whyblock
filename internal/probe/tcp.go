@@ -58,7 +58,7 @@ func NewTCPProber() *TCPProber {
 //   - REFUSED: packet reached the OS — firewall layers passed, app problem
 //   - TIMEOUT: packet never arrived — something in layers 1-5 is dropping it
 func (p *TCPProber) Probe(host string, port int, timeout time.Duration) Result {
-	address := fmt.Sprintf("%s:%d", host, port)
+	address := net.JoinHostPort(host, fmt.Sprintf("%d", port))
 
 	start := time.Now()
 	conn, err := net.DialTimeout("tcp", address, timeout)

@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 // CheckOptions holds the parsed flags for the check command.
 type CheckOptions struct {
 	InstanceID string
@@ -27,4 +29,9 @@ type RulesOptions struct {
 	Output     string
 	Region     string
 	Profile    string
+}
+
+// TimeoutDuration converts the Timeout int (seconds) to time.Duration.
+func (o CheckOptions) TimeoutDuration() time.Duration {
+	return time.Duration(o.Timeout) * time.Second
 }

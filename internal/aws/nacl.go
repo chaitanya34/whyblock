@@ -82,7 +82,7 @@ func EvaluateNACL(nacl NACL, port int, protocol string, srcIP string) (NACLRule,
 	return NACLRule{
 		RuleNumber: naclWildcardRuleNumber,
 		Direction:  "inbound",
-		Action:     "DENY",
+		Action:     "deny",
 		CIDR:       "0.0.0.0/0",
 		Protocol:   protocolAll,
 	}, true

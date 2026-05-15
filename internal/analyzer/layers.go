@@ -144,7 +144,7 @@ func checkNACL(
 
 	rule, _ := aws.EvaluateNACL(nacl, port, protocol, srcIP)
 
-	if rule.Action == "DENY" {
+	if rule.Action == "deny" {
 		detail := fmt.Sprintf("Rule %d: DENY %s", rule.RuleNumber, rule.CIDR)
 		if rule.RuleNumber == 32767 {
 			detail = "no matching rule — implicit DENY"

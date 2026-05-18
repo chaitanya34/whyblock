@@ -6,6 +6,7 @@
 
 No SSH. No SSM. No instance access required.
 
+![whyblock demo](demo.gif)
 ---
 
 ## The Problem

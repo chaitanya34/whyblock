@@ -111,27 +111,29 @@ After the AWS layer checks, `whyblock` performs a real TCP connection attempt an
 ### Using Go
 
 ```bash
-go install github.com/yourhandle/whyblock@latest
+go install github.com/chaitanya34/whyblock@latest
 ```
+> **Note:** Make sure Go's bin directory is in your PATH:
+> ```bash
+> export PATH="$PATH:$(go env GOPATH)/bin"
+> ```
+> Add this to your `~/.zshrc` or `~/.bashrc` to make it permanent.
 
 ### Homebrew (macOS / Linux)
 
-```bash
-brew tap yourhandle/whyblock
-brew install whyblock
-```
+coming soon
 
 ### Download Binary
 
-Download the latest binary for your platform from the [Releases](https://github.com/yourhandle/whyblock/releases) page.
+Download the latest binary for your platform from the [Releases](https://github.com/chaitanya34/whyblock/releases) page.
 
 ```bash
 # Linux (amd64)
-curl -L https://github.com/yourhandle/whyblock/releases/latest/download/whyblock_linux_amd64.tar.gz | tar xz
+curl -L https://github.com/chaitanya34/whyblock/releases/download/v0.1.0/whyblock_linux_amd64.tar.gz | tar xz
 sudo mv whyblock /usr/local/bin/
 
 # macOS (Apple Silicon)
-curl -L https://github.com/yourhandle/whyblock/releases/latest/download/whyblock_darwin_arm64.tar.gz | tar xz
+curl -L https://github.com/chaitanya34/whyblock/releases/download/v0.1.0/whyblock_darwin_arm64.tar.gz | tar xz
 sudo mv whyblock /usr/local/bin/
 ```
 
@@ -201,7 +203,6 @@ whyblock check --instance <instance-id> --port <port> [flags]
 | `--proto` | Protocol: `tcp` or `udp` | `tcp` |
 | `--from` | Source IP, CIDR, or `internet` | `internet` (0.0.0.0/0) |
 | `--timeout` | TCP probe timeout in seconds | `5` |
-| `--output` | Output format: `table`, `json`, `yaml` | `table` |
 | `--region` | AWS region | From AWS config |
 | `--profile` | AWS profile name | From AWS config |
 
@@ -213,9 +214,6 @@ whyblock check --instance i-0abc123 --port 443
 
 # Check if a specific IP can reach port 5432 (PostgreSQL)
 whyblock check --instance i-0abc123 --port 5432 --from 10.0.1.45
-
-# Check port 22 with JSON output (for scripting)
-whyblock check --instance i-0abc123 --port 22 --output json
 
 # Use a specific AWS profile and region
 whyblock check --instance i-0abc123 --port 443 --profile prod --region ap-south-1
@@ -254,7 +252,6 @@ SUMMARY
 | Flag | Description | Default |
 |---|---|---|
 | `--from` | Source IP, CIDR, or `internet` | `internet` |
-| `--output` | Output format: `table`, `json`, `yaml` | `table` |
 | `--region` | AWS region | From AWS config |
 | `--profile` | AWS profile name | From AWS config |
 
@@ -295,38 +292,6 @@ INTERNET GATEWAY  igw-0abc123  ·  attached  ✓
 
 ---
 
-## Output Formats
-
-All commands support `--output json` and `--output yaml` for scripting and CI/CD integration.
-
-```bash
-# JSON output
-whyblock check --instance i-0abc123 --port 443 --output json
-```
-
-```json
-{
-  "instance": "i-0abc123",
-  "port": 443,
-  "proto": "tcp",
-  "source": "0.0.0.0/0",
-  "verdict": "BLOCKED",
-  "blocked_at": "Security Group",
-  "fix": "Add inbound rule — TCP 443 from 0.0.0.0/0",
-  "console_url": "https://console.aws.amazon.com/ec2/v2/home#SecurityGroups:groupId=sg-001",
-  "layers": [
-    { "layer": "Public IP",         "detail": "52.14.xxx.xxx",              "status": "ALLOW" },
-    { "layer": "Internet Gateway",  "detail": "igw-0abc123 attached",       "status": "ALLOW" },
-    { "layer": "Route Table",       "detail": "0.0.0.0/0 → igw-0abc123",   "status": "ALLOW" },
-    { "layer": "NACL Inbound",      "detail": "Rule 100: ALLOW 0.0.0.0/0", "status": "ALLOW" },
-    { "layer": "Security Group",    "detail": "No rule for tcp:443",        "status": "BLOCK" }
-  ],
-  "probe": {
-    "outcome": "TIMEOUT",
-    "latency_ms": 5000
-  }
-}
-```
 
 ### Exit Codes
 
@@ -340,7 +305,7 @@ whyblock check --instance i-0abc123 --port 443 --output json
 Use exit codes in CI/CD pipelines:
 
 ```bash
-whyblock check --instance i-0abc123 --port 443 --output json
+whyblock check --instance i-0abc123 --port 443
 if [ $? -eq 1 ]; then
   echo "Port blocked — failing deployment"
   exit 1
@@ -360,7 +325,7 @@ AWS provides two built-in tools for network analysis. Here is why `whyblock` is 
 | **Internet → Instance** | ✗ Not supported | ✗ Not supported | ✓ |
 | **OS-level insight** | ✗ | ✗ | TCP probe (partial) |
 | **Actionable fix + link** | ✗ | ✗ | ✓ |
-| **CI/CD friendly** | ✗ | ✗ | ✓ JSON + exit codes |
+| **CI/CD friendly** | ✗ | ✗ | ✓ exit codes |
 | **Terminal native** | ✗ | ✗ | ✓ |
 
 ---
@@ -383,14 +348,17 @@ AWS provides two built-in tools for network analysis. Here is why `whyblock` is 
 ## Contributing
 
 Contributions are welcome. Please open an issue before submitting a large PR so we can discuss the approach.
-## Contributing
 
 1. Fork the repository
 2. Create a feature branch from `dev`
+   \```bash
    git checkout -b feat/your-feature-name
+   \```
 3. Make your changes
 4. Run make check before pushing
+   ```bash
    make check
+  ```
 5. Push to your fork and open a PR targeting `dev`
 6. Once reviewed and merged to dev, maintainer merges dev → main for releases
 
@@ -398,7 +366,7 @@ Contributions are welcome. Please open an issue before submitting a large PR so 
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details.
+Apache License 2.0 — see [LICENSE](LICENSE) for details.
 
 ---
 
